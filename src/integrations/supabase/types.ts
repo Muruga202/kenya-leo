@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          author_id: string | null
+          category: Database["public"]["Enums"]["article_category"]
+          content: string
+          created_at: string
+          excerpt: string
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          published: boolean | null
+          source_reference: string | null
+          source_url: string | null
+          title: string
+          trending: boolean | null
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          author_id?: string | null
+          category: Database["public"]["Enums"]["article_category"]
+          content: string
+          created_at?: string
+          excerpt: string
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          source_reference?: string | null
+          source_url?: string | null
+          title: string
+          trending?: boolean | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          author_id?: string | null
+          category?: Database["public"]["Enums"]["article_category"]
+          content?: string
+          created_at?: string
+          excerpt?: string
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          published?: boolean | null
+          source_reference?: string | null
+          source_url?: string | null
+          title?: string
+          trending?: boolean | null
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +76,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      article_category:
+        | "breaking"
+        | "politics"
+        | "entertainment"
+        | "sports"
+        | "technology"
+        | "business"
+        | "lifestyle"
+        | "trending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +211,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      article_category: [
+        "breaking",
+        "politics",
+        "entertainment",
+        "sports",
+        "technology",
+        "business",
+        "lifestyle",
+        "trending",
+      ],
+    },
   },
 } as const
