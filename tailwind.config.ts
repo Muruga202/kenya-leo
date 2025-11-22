@@ -57,6 +57,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        breaking: "hsl(var(--breaking-news))",
+        trending: "hsl(var(--trending))",
+        charcoal: "hsl(var(--charcoal))",
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
+      },
+      boxShadow: {
+        card: 'var(--shadow-card)',
+        featured: 'var(--shadow-featured)',
+        hover: 'var(--shadow-hover)',
       },
       borderRadius: {
         lg: "var(--radius)",
