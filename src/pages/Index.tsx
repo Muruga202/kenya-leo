@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { AdSpace } from "@/components/AdSpace";
 import { ArticleCard } from "@/components/ArticleCard";
 import { TrendingCarousel } from "@/components/TrendingCarousel";
+import NewsChatbot from "@/components/NewsChatbot";
 import heroBanner from "@/assets/hero-banner.jpg";
 import politicsFeature from "@/assets/politics-feature.jpg";
 import sportsFeature from "@/assets/sports-feature.jpg";
@@ -178,6 +179,7 @@ const Index = () => {
       </main>
 
       <Footer />
+      <NewsChatbot />
     </div>
   );
 };
