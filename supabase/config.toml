@@ -1,1 +1,7 @@
 project_id = "yhxjfhwvsjteslphantc"
+
+[functions.generate-news]
+verify_jwt = false
+
+[functions.news-chatbot]
+verify_jwt = false
