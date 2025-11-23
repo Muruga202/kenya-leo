@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,95 +10,25 @@ import {
   TrendingUp, 
   Eye,
   Plus,
-  LogOut,
-  Sparkles
+  LogOut
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const [articles, setArticles] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadArticles();
-  }, []);
-
-  const loadArticles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setArticles(data || []);
-    } catch (error: any) {
-      console.error('Error loading articles:', error);
-      toast({
-        title: "Error loading articles",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePublishToggle = async (id: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('articles')
-        .update({ published: !currentStatus })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: currentStatus ? "Article unpublished" : "Article published",
-      });
-      loadArticles();
-    } catch (error: any) {
-      toast({
-        title: "Error updating article",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('articles')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Article deleted",
-      });
-      loadArticles();
-    } catch (error: any) {
-      toast({
-        title: "Error deleting article",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
 
   const stats = [
-    { label: "Total Articles", value: articles.length.toString(), icon: FileText, color: "text-primary" },
-    { label: "Published", value: articles.filter(a => a.published).length.toString(), icon: Eye, color: "text-secondary" },
-    { label: "Drafts", value: articles.filter(a => !a.published).length.toString(), icon: FileText, color: "text-muted-foreground" },
-    { label: "Active Ads", value: "23", icon: DollarSign, color: "text-accent" },
+    { label: "Total Articles", value: "1,234", icon: FileText, color: "text-primary" },
+    { label: "Active Ads", value: "23", icon: DollarSign, color: "text-secondary" },
+    { label: "Total Views", value: "450K", icon: Eye, color: "text-accent" },
+    { label: "Subscribers", value: "12.5K", icon: Users, color: "text-trending" },
+  ];
+
+  const recentArticles = [
+    { id: 1, title: "Parliament Passes Historic Climate Action Bill", status: "Published", views: "12.5K" },
+    { id: 2, title: "National Team Eyes Continental Glory", status: "Published", views: "8.2K" },
+    { id: 3, title: "Nairobi's Food Scene Revolution", status: "Draft", views: "-" },
+    { id: 4, title: "Tech Innovation Hub Opens in Westlands", status: "Published", views: "5.1K" },
   ];
 
   return (
@@ -117,23 +46,13 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="default" size="sm" asChild>
-              <Link to="/admin/news-generator">
-                <Sparkles className="mr-2 h-4 w-4" />
-                AI News Generator
-              </Link>
-            </Button>
             <Button variant="outline" size="sm" asChild>
               <Link to="/">
                 <Eye className="mr-2 h-4 w-4" />
                 View Site
               </Link>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => {
-              supabase.auth.signOut();
-              toast({ title: "Logged out successfully" });
-              navigate('/admin/login');
-            }}>
+            <Button variant="outline" size="sm">
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
@@ -183,57 +102,34 @@ const AdminDashboard = () => {
                 <CardDescription>Manage and monitor your published content</CardDescription>
               </CardHeader>
               <CardContent>
-                {isLoading ? (
-                  <div className="text-center py-8 text-muted-foreground">Loading articles...</div>
-                ) : articles.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground mb-4">No articles yet</p>
-                    <Button asChild>
-                      <Link to="/admin/news-generator">
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Generate Your First Article
-                      </Link>
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {articles.map((article) => (
-                      <div key={article.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-1">{article.title}</h3>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className={`px-2 py-0.5 rounded-full text-xs ${
-                              article.published 
-                                ? 'bg-secondary/20 text-secondary-foreground' 
-                                : 'bg-muted text-muted-foreground'
-                            }`}>
-                              {article.published ? 'Published' : 'Draft'}
+                <div className="space-y-4">
+                  {recentArticles.map((article) => (
+                    <div key={article.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">{article.title}</h3>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${
+                            article.status === 'Published' 
+                              ? 'bg-secondary/20 text-secondary-foreground' 
+                              : 'bg-muted text-muted-foreground'
+                          }`}>
+                            {article.status}
+                          </span>
+                          {article.views !== '-' && (
+                            <span className="flex items-center gap-1">
+                              <Eye className="h-3 w-3" />
+                              {article.views}
                             </span>
-                            <span className="capitalize">{article.category}</span>
-                            <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handlePublishToggle(article.id, article.published)}
-                          >
-                            {article.published ? 'Unpublish' : 'Publish'}
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleDelete(article.id)}
-                          >
-                            Delete
-                          </Button>
+                          )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">Edit</Button>
+                        <Button variant="outline" size="sm">Delete</Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

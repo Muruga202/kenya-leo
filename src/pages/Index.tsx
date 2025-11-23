@@ -1,73 +1,92 @@
-import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AdSpace } from "@/components/AdSpace";
 import { ArticleCard } from "@/components/ArticleCard";
 import { TrendingCarousel } from "@/components/TrendingCarousel";
-import { supabase } from "@/integrations/supabase/client";
 import heroBanner from "@/assets/hero-banner.jpg";
 import politicsFeature from "@/assets/politics-feature.jpg";
+import sportsFeature from "@/assets/sports-feature.jpg";
+import lifestyleFeature from "@/assets/lifestyle-feature.jpg";
+
+const featuredArticles = [
+  {
+    id: "featured-1",
+    title: "Parliament Passes Historic Climate Action Bill",
+    excerpt: "Landmark legislation sets ambitious targets for renewable energy and environmental protection across the nation.",
+    image: politicsFeature,
+    category: "Politics",
+    date: "1 hour ago",
+  },
+  {
+    id: "featured-2",
+    title: "National Team Eyes Continental Glory",
+    excerpt: "Coach reveals winning strategy as squad prepares for crucial championship matches.",
+    image: sportsFeature,
+    category: "Sports",
+    date: "3 hours ago",
+  },
+  {
+    id: "featured-3",
+    title: "Nairobi's Food Scene Revolution",
+    excerpt: "Young chefs blend traditional flavors with modern techniques, creating unique culinary experiences.",
+    image: lifestyleFeature,
+    category: "Lifestyle",
+    date: "5 hours ago",
+  },
+];
+
+const latestArticles = [
+  {
+    id: "latest-1",
+    title: "County Governments Launch Digital Services Platform",
+    excerpt: "New initiative aims to improve service delivery and transparency at local government level.",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop",
+    category: "Technology",
+    date: "30 minutes ago",
+  },
+  {
+    id: "latest-2",
+    title: "Education Reforms Show Promising Results",
+    excerpt: "Latest assessment data reveals improvements in student performance across key subjects.",
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop",
+    category: "Education",
+    date: "1 hour ago",
+  },
+  {
+    id: "latest-3",
+    title: "Tourism Sector Reports Record Growth",
+    excerpt: "International visitor numbers surge as Kenya's attractions gain global recognition.",
+    image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&h=600&fit=crop",
+    category: "Business",
+    date: "2 hours ago",
+  },
+  {
+    id: "latest-4",
+    title: "Healthcare Initiative Reaches Milestone",
+    excerpt: "Universal health coverage program expands to cover additional counties this month.",
+    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop",
+    category: "Health",
+    date: "3 hours ago",
+  },
+  {
+    id: "latest-5",
+    title: "Local Artists Shine at International Festival",
+    excerpt: "Kenyan performers receive standing ovations at prestigious cultural event.",
+    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
+    category: "Entertainment",
+    date: "4 hours ago",
+  },
+  {
+    id: "latest-6",
+    title: "Agriculture Sector Embraces Smart Farming",
+    excerpt: "Technology adoption helps farmers increase yields and reduce environmental impact.",
+    image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop",
+    category: "Agriculture",
+    date: "5 hours ago",
+  },
+];
 
 const Index = () => {
-  const [featuredArticles, setFeaturedArticles] = useState<any[]>([]);
-  const [latestArticles, setLatestArticles] = useState<any[]>([]);
-
-  useEffect(() => {
-    loadArticles();
-  }, []);
-
-  const loadArticles = async () => {
-    try {
-      // Load featured articles
-      const { data: featured } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('published', true)
-        .eq('featured', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      // Load latest articles
-      const { data: latest } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('published', true)
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      setFeaturedArticles(featured || []);
-      setLatestArticles(latest || []);
-    } catch (error) {
-      console.error('Error loading articles:', error);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours} hours ago`;
-    if (diffInHours < 48) return 'Yesterday';
-    return date.toLocaleDateString();
-  };
-
-  // Default featured content if no articles in database
-  const defaultFeatured = [
-    {
-      id: "default-1",
-      title: "AI-Powered News Generation Now Live",
-      excerpt: "Kenya Leo Media introduces cutting-edge AI technology to deliver faster, more accurate news coverage.",
-      image_url: politicsFeature,
-      category: "technology",
-      created_at: new Date().toISOString(),
-    }
-  ];
-
-  const displayFeatured = featuredArticles.length > 0 ? featuredArticles : defaultFeatured;
-  const displayLatest = latestArticles.length > 0 ? latestArticles : [];
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -108,17 +127,8 @@ const Index = () => {
             <h2 className="text-3xl font-bold">Featured Stories</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayFeatured.map((article) => (
-              <ArticleCard 
-                key={article.id} 
-                id={article.id}
-                title={article.title}
-                excerpt={article.excerpt}
-                image={article.image_url || politicsFeature}
-                category={article.category}
-                date={formatDate(article.created_at)}
-                featured 
-              />
+            {featuredArticles.map((article) => (
+              <ArticleCard key={article.id} {...article} featured />
             ))}
           </div>
         </section>
@@ -136,23 +146,9 @@ const Index = () => {
                 <h2 className="text-3xl font-bold">Latest News</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {displayLatest.length > 0 ? (
-                  displayLatest.map((article) => (
-                    <ArticleCard 
-                      key={article.id} 
-                      id={article.id}
-                      title={article.title}
-                      excerpt={article.excerpt}
-                      image={article.image_url || "https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=800&h=600&fit=crop"}
-                      category={article.category}
-                      date={formatDate(article.created_at)}
-                    />
-                  ))
-                ) : (
-                  <div className="col-span-2 text-center py-12 text-muted-foreground">
-                    <p>No articles published yet. Check back soon!</p>
-                  </div>
-                )}
+                {latestArticles.map((article) => (
+                  <ArticleCard key={article.id} {...article} />
+                ))}
               </div>
             </div>
 
