@@ -14,9 +14,95 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_impressions: {
+        Row: {
+          ad_id: string
+          clicked: boolean
+          created_at: string
+          id: string
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ad_id: string
+          clicked?: boolean
+          created_at?: string
+          id?: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ad_id?: string
+          clicked?: boolean
+          created_at?: string
+          id?: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_impressions_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "advertisements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advertisements: {
+        Row: {
+          active: boolean
+          clicks: number
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          image_url: string | null
+          impressions: number
+          link_url: string | null
+          placement: string
+          start_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          clicks?: number
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          impressions?: number
+          link_url?: string | null
+          placement: string
+          start_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          clicks?: number
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          impressions?: number
+          link_url?: string | null
+          placement?: string
+          start_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
-          author_id: string | null
+          author_id: string
           category: Database["public"]["Enums"]["article_category"]
           content: string
           created_at: string
@@ -33,7 +119,7 @@ export type Database = {
           view_count: number | null
         }
         Insert: {
-          author_id?: string | null
+          author_id?: string
           category: Database["public"]["Enums"]["article_category"]
           content: string
           created_at?: string
@@ -50,7 +136,7 @@ export type Database = {
           view_count?: number | null
         }
         Update: {
-          author_id?: string | null
+          author_id?: string
           category?: Database["public"]["Enums"]["article_category"]
           content?: string
           created_at?: string
@@ -68,14 +154,152 @@ export type Database = {
         }
         Relationships: []
       }
+      media: {
+        Row: {
+          created_at: string
+          filename: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          uploaded_by: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          uploaded_by?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          uploaded_by?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          article_id: string | null
+          created_at: string
+          id: string
+          ip_address: string | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          article_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          article_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_views_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      increment_ad_clicks: { Args: { ad_uuid: string }; Returns: undefined }
+      increment_ad_impressions: {
+        Args: { ad_uuid: string }
+        Returns: undefined
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      app_role: "admin" | "editor" | "viewer"
       article_category:
         | "breaking"
         | "politics"
@@ -212,6 +436,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "editor", "viewer"],
       article_category: [
         "breaking",
         "politics",
